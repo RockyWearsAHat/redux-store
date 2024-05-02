@@ -6,16 +6,7 @@ import {
 } from "../../redux/cartSlice";
 
 const CartItem = ({ item }) => {
-  // const [, dispatch] = useStoreContext();
   const dispatch = useDispatch();
-
-  // const removeFromCart = (item) => {
-  //   dispatch({
-  //     type: REMOVE_FROM_CART,
-  //     _id: item._id,
-  //   });
-  //   idbPromise("cart", "delete", { ...item });
-  // };
 
   const removeFromCart = (item) => {
     dispatch(removeFromCartRedux(item._id));
