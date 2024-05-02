@@ -1,7 +1,5 @@
 MIT License
 
-Redux Store
-
 Copyright (c) 2024 | Rocky
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
