@@ -13,40 +13,46 @@ import {
 import { QUERY_PRODUCTS } from "../utils/queries";
 import { idbPromise } from "../utils/helpers";
 import spinner from "../assets/spinner.gif";
+import { useDispatch, useSelector } from "react-redux";
+import { updateProductsRedux } from "../redux/productsSlice";
+import {
+  addToCartRedux,
+  removeFromCartRedux,
+  updateCartQuantityRedux,
+} from "../redux/cartSlice";
 
 function Detail() {
-  const [state, dispatch] = useStoreContext();
+  // const [state, dispatch] = useStoreContext();
   const { id } = useParams();
 
   const [currentProduct, setCurrentProduct] = useState({});
 
   const { loading, data } = useQuery(QUERY_PRODUCTS);
 
-  const { products, cart } = state;
+  const dispatch = useDispatch();
+  const products = useSelector((state) => state.products.products);
+
+  // const { products } = state;
+
+  const cart = useSelector((state) => state.cart.cart);
 
   useEffect(() => {
     // already in global store
-    console.log(products);
     if (products.length) {
       const product = products.find((product) => product._id === id);
-
       const item = {
         image: product.image,
         name: product.name,
+        description: product.description,
         _id: product._id,
         price: product.price,
         quantity: product.quantity,
       };
-
       setCurrentProduct(item);
     }
     // retrieved from server
     else if (data) {
-      dispatch({
-        type: UPDATE_PRODUCTS,
-        products: data.products,
-      });
-
+      dispatch(updateProductsRedux(data.products));
       data.products.forEach((product) => {
         idbPromise("products", "put", product);
       });
@@ -54,10 +60,7 @@ function Detail() {
     // get cache from idb
     else if (!loading) {
       idbPromise("products", "get").then((indexedProducts) => {
-        dispatch({
-          type: UPDATE_PRODUCTS,
-          products: indexedProducts,
-        });
+        dispatch(updateProductsRedux(indexedProducts));
       });
     }
   }, [products, data, loading, dispatch, id]);
@@ -65,30 +68,47 @@ function Detail() {
   const addToCart = () => {
     const itemInCart = cart.find((cartItem) => cartItem._id === id);
     if (itemInCart) {
-      dispatch({
-        type: UPDATE_CART_QUANTITY,
-        _id: id,
-        purchaseQuantity: parseInt(itemInCart.purchaseQuantity) + 1,
-      });
+      dispatch(
+        updateCartQuantityRedux({
+          _id: id,
+          purchaseQuantity: parseInt(itemInCart.purchaseQuantity) + 1,
+        })
+      );
       idbPromise("cart", "put", {
         ...itemInCart,
         purchaseQuantity: parseInt(itemInCart.purchaseQuantity) + 1,
       });
     } else {
-      dispatch({
-        type: ADD_TO_CART,
-        product: { ...currentProduct, purchaseQuantity: 1 },
-      });
+      dispatch(
+        addToCartRedux({
+          product: { ...currentProduct, purchaseQuantity: 1 },
+        })
+      );
       idbPromise("cart", "put", { ...currentProduct, purchaseQuantity: 1 });
     }
   };
 
-  const removeFromCart = () => {
-    dispatch({
-      type: REMOVE_FROM_CART,
-      _id: currentProduct._id,
-    });
+  const removeOneFromCart = () => {
+    const itemInCart = cart.find((cartItem) => cartItem._id === id);
+    if (!itemInCart) return;
+    if (itemInCart.purchaseQuantity > 1) {
+      dispatch(
+        updateCartQuantityRedux({
+          _id: id,
+          purchaseQuantity: parseInt(itemInCart.purchaseQuantity) - 1,
+        })
+      );
+      idbPromise("cart", "put", {
+        ...itemInCart,
+        purchaseQuantity: parseInt(itemInCart.purchaseQuantity) - 1,
+      });
+    } else {
+      removeFromCart();
+    }
+  };
 
+  const removeFromCart = () => {
+    dispatch(removeFromCartRedux(currentProduct._id));
     idbPromise("cart", "delete", { ...currentProduct });
   };
 
@@ -104,12 +124,18 @@ function Detail() {
 
           <p>
             <strong>Price:</strong>${currentProduct.price}{" "}
-            <button onClick={addToCart}>Add to Cart</button>
+            <button onClick={() => addToCart(1)}>Add to Cart</button>
             <button
-              disabled={!cart.find((p) => p._id === currentProduct._id)}
-              onClick={removeFromCart}
+              hidden={!cart.find((p) => p._id === currentProduct._id)}
+              onClick={() => removeOneFromCart()}
             >
-              Remove from Cart
+              Remove One from Cart
+            </button>
+            <button
+              hidden={!cart.find((p) => p._id === currentProduct._id)}
+              onClick={() => removeFromCart()}
+            >
+              Remove All from Cart
             </button>
           </p>
 

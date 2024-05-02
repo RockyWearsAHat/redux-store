@@ -10,7 +10,7 @@ export const cartSlice = createSlice({
       state.cart.push(action.payload.product);
     },
     addMultipleToCartRedux: (state, action) => {
-      state.cart.push(...action.payload);
+      state.cart = action.payload;
     },
     removeFromCartRedux: (state, action) => {
       state.cart = state.cart.filter((item) => item._id !== action.payload);
