@@ -1,7 +1,7 @@
 # Redux Store
 
 [![Redux](https://img.shields.io/badge/Redux_Toolkit-2.2.3-7f1ed4?style=for-the-badge&labelColor=ebd4ff&logo=redux&logoColor=7f1ed4)](https://redux.js.org/)
-[![Redux](https://img.shields.io/badge/React_Redux-9.1.1-16c5f5?style=for-the-badge&labelColor=1e2121&logo=redux&logoColor=16c5f5)](https://redux.js.org/)
+[![Redux](https://img.shields.io/badge/React_Redux-9.1.1-16c5f5?style=for-the-badge&labelColor=1e2121&logo=redux&logoColor=16c5f5)](https://react-redux.js.org/)
 
 [![MongoDB](https://img.shields.io/badge/MongoDB_/_Mongoose-8.0.0-05b531?style=for-the-badge&labelColor=b5f5c5&logo=mongodb&logoColor=05b531)](https://www.mongodb.com/)
 [![Express](https://img.shields.io/badge/Express-4.17.2-fff?style=for-the-badge&labelColor=1e2121&logo=express&logoColor=fff)](https://expressjs.com/)
