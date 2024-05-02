@@ -15,7 +15,7 @@ import { idbPromise } from "../utils/helpers";
 import spinner from "../assets/spinner.gif";
 
 function Detail() {
-  // const [state, dispatch] = useStoreContext();
+  const [state, dispatch] = useStoreContext();
   const { id } = useParams();
 
   const [currentProduct, setCurrentProduct] = useState({});
@@ -26,6 +26,7 @@ function Detail() {
 
   useEffect(() => {
     // already in global store
+    console.log(products);
     if (products.length) {
       const product = products.find((product) => product._id === id);
 
